@@ -54,3 +54,19 @@ func TestGetUser(t *testing.T) {
 	require.WithinDuration(t, user1.PasswordChangedAt, user2.PasswordChangedAt, time.Second)
 
 }
+
+func TestCreateTestUser(t *testing.T) {
+	passwd, err := util.HashedPassword("testing")
+	require.NoError(t, err)
+
+	arg := CreateUserParams{
+		Username:       "test12",
+		HashedPassword: passwd,
+		FullName:       "test",
+		Email:          "test12@test.com",
+	}
+
+	user, err := testQueries.CreateUser(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, user)
+}
