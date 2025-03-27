@@ -1,9 +1,5 @@
-#!/bin/sh 
+#!/bin/sh
 
-set -e 
-
-echo "Run db migration"
-/app/migrate -path /app/migrations -database "$DB_SOURCE" -verbose up
-
+set -e
 echo "Start app"
 exec "$@"

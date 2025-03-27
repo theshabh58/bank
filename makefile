@@ -28,14 +28,15 @@ test:
 server:
 	go run main.go
 
-mock: 
-	mockgen -package mockdb -destination db/mock/store.go bank/db/sqlc Store
-
 proto:
 	rm -f pb/*.go
+	rm -f docs/swagger/*.swagger.json
 	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
     --go-grpc_out=pb --go-grpc_opt=paths=source_relative \
+		--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \
+		--openapiv2_out=docs/swagger --openapiv2_opt=allow_merge=true,merge_file_name=bank \
     proto/*.proto
+	statik -src=./docs/swagger -dest=./docs
 
 sleep:
 	sleep 10
@@ -48,5 +49,10 @@ db: removedb postgres sleep createdb migrateup
 evans:
 	evans --host localhost --port 8888 -r repl
 
-.PHONY: postgres createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc test server mock sleep removedb db proto evans
+mock:
+	mockgen -package mockdb -destination db/mock/store.go bank/db/sqlc Store
 
+redis:
+	docker run --name redis -p 6379:6379 -d redis:latest
+
+.PHONY: postgres createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc test server mock sleep removedb db proto evans redis

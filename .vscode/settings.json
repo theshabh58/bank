@@ -1,0 +1,6 @@
+{
+  "go.toolsEnvVars": {
+    "GOPROXY": "direct",
+    "GOSUMDB": "off"
+  }
+}
